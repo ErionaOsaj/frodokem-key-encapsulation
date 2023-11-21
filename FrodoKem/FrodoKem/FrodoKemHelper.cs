@@ -9,14 +9,14 @@ namespace FrodoKem
 {
     public class FrodoKemHelper
     {
-        private static Matrix A;
+        private  Matrix privateMatrixA;
         private const int MatrixSize = 128; // Define according to FrodoKEM specification
         private RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
         private const int NoiseMax = 10;
         public FrodoKemHelper()
         {
             //RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
-            A = GenerateRandomMatrix(MatrixSize, MatrixSize);
+            privateMatrixA = GenerateRandomMatrix(MatrixSize, MatrixSize);
         }
         private Matrix GenerateNoiseMatrix(int rows, int cols)
         {
@@ -86,7 +86,7 @@ namespace FrodoKem
             Matrix e1 = GenerateNoiseMatrix(MatrixSize, MatrixSize);
             Matrix e2 = GenerateNoiseVectorMatrix(MatrixSize); // Adjusted method call
             Matrix C1 = publicKey.Multiply(r).Add(e1);
-            Matrix C2 = r.Transpose().Multiply(A).Add(e2); // Now e2 has the correct dimensions
+            Matrix C2 = r.Transpose().Multiply(privateMatrixA).Add(e2); // Now e2 has the correct dimensions
 
             byte[] sharedSecret = HashMatrices(C1, C2);
             return (new Matrix(C1, C2), sharedSecret); 

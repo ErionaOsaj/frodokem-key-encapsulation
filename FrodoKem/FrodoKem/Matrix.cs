@@ -1,12 +1,10 @@
-﻿using System;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 
 public class Matrix
 {
     public int Rows { get; private set; }
     public int Columns { get; private set; }
     private int[,] data;
-
     public Matrix(Matrix top, Matrix bottom)
     {
         if (top.Columns != bottom.Columns)
@@ -34,7 +32,6 @@ public class Matrix
             }
         }
     }
-
     public Matrix(int rows, int columns)
     {
         Rows = rows;
@@ -48,23 +45,75 @@ public class Matrix
         set { data[row, col] = value; }
     }
 
+
     public Matrix Transpose()
     {
-        throw new NotImplementedException();
-    }
+        Matrix transposed = new Matrix(this.Columns, this.Rows);
 
+        for (int i = 0; i < this.Rows; i++)
+        {
+            for (int j = 0; j < this.Columns; j++)
+            {
+                transposed[j, i] = this[i, j];
+            }
+        }
+
+        return transposed;
+    }
     public Matrix Subtract(Matrix other)
     {
-        throw new NotImplementedException();
+        if (this.Rows != other.Rows || this.Columns != other.Columns)
+            throw new ArgumentException("Matrices must have the same dimensions for subtraction.");
+
+        Matrix result = new Matrix(this.Rows, this.Columns);
+        for (int i = 0; i < this.Rows; i++)
+        {
+            for (int j = 0; j < this.Columns; j++)
+            {
+                result[i, j] = this[i, j] - other[i, j];
+            }
+        }
+
+        return result;
     }
+
 
     public Matrix Multiply(Matrix other)
     {
-        throw new NotImplementedException();
+        if (this.Columns != other.Rows)
+            throw new ArgumentException("The number of columns in the first matrix must equal the number of rows in the second matrix.");
+
+        Matrix result = new Matrix(this.Rows, other.Columns);
+        for (int i = 0; i < result.Rows; i++)
+        {
+            for (int j = 0; j < result.Columns; j++)
+            {
+                result[i, j] = 0;
+                for (int k = 0; k < this.Columns; k++)
+                {
+                    result[i, j] += this[i, k] * other[k, j];
+                }
+            }
+        }
+
+        return result;
     }
+
 
     public Matrix Add(Matrix other)
     {
-        throw new NotImplementedException();
+        if (this.Rows != other.Rows || this.Columns != other.Columns)
+            throw new ArgumentException("Matrices must have the same dimensions to be added.");
+
+        Matrix result = new Matrix(this.Rows, this.Columns);
+        for (int i = 0; i < this.Rows; i++)
+        {
+            for (int j = 0; j < this.Columns; j++)
+            {
+                result[i, j] = this[i, j] + other[i, j];
+            }
+        }
+
+        return result;
     }
 }
