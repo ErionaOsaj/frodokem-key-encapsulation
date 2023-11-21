@@ -1,0 +1,14 @@
+C:\Users\Eriona\Documents\FIEK\IS.FrodoKem\FrodoKem\bin\Debug\net6.0\FrodoKem.exe
+C:\Users\Eriona\Documents\FIEK\IS.FrodoKem\FrodoKem\bin\Debug\net6.0\FrodoKem.deps.json
+C:\Users\Eriona\Documents\FIEK\IS.FrodoKem\FrodoKem\bin\Debug\net6.0\FrodoKem.runtimeconfig.json
+C:\Users\Eriona\Documents\FIEK\IS.FrodoKem\FrodoKem\bin\Debug\net6.0\FrodoKem.dll
+C:\Users\Eriona\Documents\FIEK\IS.FrodoKem\FrodoKem\bin\Debug\net6.0\FrodoKem.pdb
+C:\Users\Eriona\Documents\FIEK\IS.FrodoKem\FrodoKem\obj\Debug\net6.0\FrodoKem.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Eriona\Documents\FIEK\IS.FrodoKem\FrodoKem\obj\Debug\net6.0\FrodoKem.AssemblyInfoInputs.cache
+C:\Users\Eriona\Documents\FIEK\IS.FrodoKem\FrodoKem\obj\Debug\net6.0\FrodoKem.AssemblyInfo.cs
+C:\Users\Eriona\Documents\FIEK\IS.FrodoKem\FrodoKem\obj\Debug\net6.0\FrodoKem.csproj.CoreCompileInputs.cache
+C:\Users\Eriona\Documents\FIEK\IS.FrodoKem\FrodoKem\obj\Debug\net6.0\FrodoKem.dll
+C:\Users\Eriona\Documents\FIEK\IS.FrodoKem\FrodoKem\obj\Debug\net6.0\refint\FrodoKem.dll
+C:\Users\Eriona\Documents\FIEK\IS.FrodoKem\FrodoKem\obj\Debug\net6.0\FrodoKem.pdb
+C:\Users\Eriona\Documents\FIEK\IS.FrodoKem\FrodoKem\obj\Debug\net6.0\FrodoKem.genruntimeconfig.cache
+C:\Users\Eriona\Documents\FIEK\IS.FrodoKem\FrodoKem\obj\Debug\net6.0\ref\FrodoKem.dll
