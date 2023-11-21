@@ -9,7 +9,7 @@ namespace FrodoKem
 {
     public class FrodoKemHelper
     {
-        private  Matrix privateMatrixA;
+        private  readonly Matrix privateMatrixA;
         private const int MatrixSize = 128; // Define according to FrodoKEM specification
         private RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
         private const int NoiseMax = 10;
@@ -59,12 +59,13 @@ namespace FrodoKem
 
             return matrix;
         }
+
         public (Matrix publicKey, Matrix privateKey) KeyGen()
         {
-            Matrix A = GenerateRandomMatrix(MatrixSize, MatrixSize);
+            //Matrix A = GenerateRandomMatrix(MatrixSize, MatrixSize);
             Matrix s = GenerateNoiseMatrix(MatrixSize, MatrixSize);
             Matrix e = GenerateNoiseMatrix(MatrixSize, MatrixSize);
-            Matrix B = A.Multiply(s).Add(e);
+            Matrix B = privateMatrixA.Multiply(s).Add(e);
 
             return (B, s);
         }
