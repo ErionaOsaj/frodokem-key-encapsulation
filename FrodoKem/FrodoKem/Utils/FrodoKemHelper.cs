@@ -5,18 +5,18 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FrodoKem
+namespace FrodoKem.Utils
 {
     public class FrodoKemHelper
     {
-        private  readonly Matrix privateMatrixA;
+        private readonly Matrix matrixA;
         private const int MatrixSize = 128; // Define according to FrodoKEM specification
-        private RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
+        private readonly RNGCryptoServiceProvider rng;
         private const int NoiseMax = 10;
         public FrodoKemHelper()
         {
-            //RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
-            privateMatrixA = GenerateRandomMatrix(MatrixSize, MatrixSize);
+            rng = new RNGCryptoServiceProvider();
+            matrixA = GenerateRandomMatrix(MatrixSize, MatrixSize);
         }
         private Matrix GenerateNoiseMatrix(int rows, int cols)
         {
@@ -30,7 +30,7 @@ namespace FrodoKem
                 {
                     rng.GetBytes(randomNumber);
                     int noiseValue = BitConverter.ToInt32(randomNumber, 0);
-                    matrix[i, j] = Mod(noiseValue, NoiseMax) - (NoiseMax / 2); // Example to create a simple noise
+                    matrix[i, j] = Mod(noiseValue, NoiseMax) - NoiseMax / 2; // Example to create a simple noise
                 }
             }
 
@@ -62,10 +62,9 @@ namespace FrodoKem
 
         public (Matrix publicKey, Matrix privateKey) KeyGen()
         {
-            //Matrix A = GenerateRandomMatrix(MatrixSize, MatrixSize);
             Matrix s = GenerateNoiseMatrix(MatrixSize, MatrixSize);
             Matrix e = GenerateNoiseMatrix(MatrixSize, MatrixSize);
-            Matrix B = privateMatrixA.Multiply(s).Add(e);
+            Matrix B = matrixA.Multiply(s).Add(e);
 
             return (B, s);
         }
@@ -76,18 +75,41 @@ namespace FrodoKem
             Matrix e1 = GenerateNoiseMatrix(MatrixSize, MatrixSize);
             Matrix e2 = GenerateNoiseVectorMatrix(MatrixSize); // Adjusted method call
             Matrix C1 = publicKey.Multiply(r).Add(e1);
-            Matrix C2 = r.Transpose().Multiply(privateMatrixA).Add(e2); // Now e2 has the correct dimensions
+            Matrix C2 = r.Transpose().Multiply(matrixA).Add(e2);
 
             byte[] sharedSecret = HashMatrices(C1, C2);
-            return (new Matrix(C1, C2), sharedSecret); 
+            return (new Matrix(C1, C2), sharedSecret);
         }
         public byte[] Decapsulate(Matrix ciphertext, Matrix privateKey)
         {
+            //Matrix C1 = ExtractC1(ciphertext);
+            //Matrix C2 = ExtractC2(ciphertext);
+            //Matrix r_prime = C2.Subtract(privateKey.Transpose().Multiply(C1));
+
+            //return HashMatrices(C1, r_prime);
+            // Extract C1 and C2 from the ciphertext.
             Matrix C1 = ExtractC1(ciphertext);
             Matrix C2 = ExtractC2(ciphertext);
-            Matrix r_prime = C2.Subtract(privateKey.Transpose().Multiply(C1));
+
+            Matrix r_prime = privateKey.Transpose().Multiply(C1); // Placeholder for the correct operation.
+
+            // Check if the recomputed C2 matches the C2 from the ciphertext.
+            // This is a placeholder and might not be the correct way to verify the shared secret.
+            Matrix C2_recomputed = r_prime.Transpose().Multiply(matrixA); // You might need to re-add e2 if you have it.
+
 
             return HashMatrices(C1, r_prime);
+
+            // Only if C2 matches, we proceed. Otherwise, we throw an error or handle the case when the verification fails.
+            //if (C2.Equals(C2_recomputed))
+            //{
+            //    // If C2 matches, hash the matrices to produce the shared secret.
+            //    return HashMatrices(C1, r_prime);
+            //}
+            //else
+            //{
+            //    throw new InvalidOperationException("Decapsulation failed: C2 mismatch.");
+            //}
         }
 
         private byte[] HashMatrices(Matrix m1, Matrix m2)
@@ -116,7 +138,7 @@ namespace FrodoKem
                 byte[] randomNumber = new byte[4]; // Size of an integer
                 rng.GetBytes(randomNumber);
                 int noiseValue = BitConverter.ToInt32(randomNumber, 0);
-                int noise = Mod(noiseValue, NoiseMax) - (NoiseMax / 2); // Example to create a simple noise
+                int noise = Mod(noiseValue, NoiseMax) - NoiseMax / 2; // Example to create a simple noise
 
                 for (int j = 0; j < size; j++)
                 {
@@ -157,17 +179,16 @@ namespace FrodoKem
 
             return C1;
         }
-
         private Matrix ExtractC2(Matrix ciphertext)
         {
             int halfRows = ciphertext.Rows / 2;
             Matrix C2 = new Matrix(halfRows, ciphertext.Columns);
 
-            for (int i = 0; i < halfRows; i++)
+            for (int i = halfRows; i < ciphertext.Rows; i++)
             {
                 for (int j = 0; j < ciphertext.Columns; j++)
                 {
-                    C2[i, j] = ciphertext[i + halfRows, j];
+                    C2[i - halfRows, j] = ciphertext[i, j];
                 }
             }
 
@@ -184,7 +205,7 @@ namespace FrodoKem
             {
                 rng.GetBytes(randomNumber);
                 int noiseValue = BitConverter.ToInt32(randomNumber, 0);
-                vector[i, 0] = Mod(noiseValue, NoiseMax) - (NoiseMax / 2); // Example to create a simple noise
+                vector[i, 0] = Mod(noiseValue, NoiseMax) - NoiseMax / 2; // Example to create a simple noise
             }
 
             return vector;

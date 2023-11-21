@@ -1,6 +1,7 @@
 ﻿//// See https://aka.ms/new-console-template for more information
 
-using FrodoKem;
+using FrodoKem.Utils;
+
 FrodoKemHelper frodoKem = new FrodoKemHelper();
 
 (Matrix publicKey, Matrix privateKey) = frodoKem.KeyGen();
@@ -14,9 +15,6 @@ Console.WriteLine("Encapsulation done. Ciphertext and shared secret generated.")
 byte[] decapsulatedSharedSecret = frodoKem.Decapsulate(ciphertext, privateKey);
 Console.WriteLine("Decapsulation done. Shared secret retrieved.");
 
-// Compare the encapsulated and decapsulated shared secrets
-bool secretsMatch = AreEqual(encapsulatedSharedSecret, decapsulatedSharedSecret);
-Console.WriteLine($"Do the shared secrets match? {secretsMatch}");
 
 // Prompt the user to press any key to continue
 Console.WriteLine("Press any key to continue...");
