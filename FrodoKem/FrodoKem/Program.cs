@@ -1,38 +1,53 @@
 ﻿//// See https://aka.ms/new-console-template for more information
 
 using FrodoKem.Utils;
-
-FrodoKemHelper frodoKem = new FrodoKemHelper();
-
-(Matrix publicKey, Matrix privateKey) = frodoKem.KeyGen();
-Console.WriteLine("Keys generated.");
-
-// Encapsulate to generate ciphertext and shared secret
-(Matrix ciphertext, byte[] encapsulatedSharedSecret) = frodoKem.Encapsulate(publicKey);
-Console.WriteLine("Encapsulation done. Ciphertext and shared secret generated.");
-
-// Decapsulate to retrieve the shared secret
-byte[] decapsulatedSharedSecret = frodoKem.Decapsulate(ciphertext, privateKey);
-Console.WriteLine("Decapsulation done. Shared secret retrieved.");
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Pqc.Crypto.Frodo;
+using Org.BouncyCastle.Utilities.Encoders;
 
 
-// Prompt the user to press any key to continue
+Dictionary<string, FrodoParameters> Parameters = new Dictionary<string, FrodoParameters>()
+        {
+           
+            { "PQCkemKAT_43088_shake.rsp", FrodoParameters.frodokem43088shaker3 },
+        };
+
+
+var name = "PQCkemKAT_43088_shake.rsp";
+var frodoParameters = Parameters[name];
+
+
+var strseed = "061550234D158C5EC95595FE04EF7A25767F2E24CC2BC479D09D86DC9ABCFDE7056A8C266F9EF97ED08541DBD2E1FFA1";
+//var strseed = "061550234D158C5EC95595FE04EF7A25767F2E24CC2BC479D09D86DC9ABCFDE7056A8C266F9EF97ED08541DBD2E1FFA1";
+
+
+byte[] seed = Hex.Decode(strseed);
+FrodoKeyPairGenerator kpGen = new FrodoKeyPairGenerator();
+NistSecureRandom random = new NistSecureRandom(seed, null);
+
+FrodoKeyGenerationParameters genParams = new FrodoKeyGenerationParameters(random, frodoParameters);
+
+kpGen.Init(genParams);
+AsymmetricCipherKeyPair kp = kpGen.GenerateKeyPair();
+FrodoPublicKeyParameters pubParams = (FrodoPublicKeyParameters)kp.Public;
+FrodoPrivateKeyParameters privParams = (FrodoPrivateKeyParameters)kp.Private;
+
+
+FrodoKEMGenerator frodoEncCipher = new FrodoKEMGenerator(random);
+ISecretWithEncapsulation secWenc = frodoEncCipher.GenerateEncapsulated(pubParams);
+byte[] generated_cipher_text = secWenc.GetEncapsulation();
+byte[] original_secret = secWenc.GetSecret();
+
+//  Decapsulation
+FrodoKEMExtractor frodoDecCipher = new FrodoKEMExtractor(privParams);
+byte[] decapsulated_secret = frodoDecCipher.ExtractSecret(generated_cipher_text);
+
+// Test to ensure they are equal
+bool isSuccess = original_secret.SequenceEqual(decapsulated_secret);
+
+Console.WriteLine($"Encapsulation/Decapsulation Test: {(isSuccess ? "Success" : "Failure")}");
+
+
 Console.WriteLine("Press any key to continue...");
 Console.ReadKey();
-
-
-static bool AreEqual(byte[] a, byte[] b)
-{
-    if (a.Length != b.Length)
-        return false;
-
-    for (int i = 0; i < a.Length; i++)
-    {
-        if (a[i] != b[i])
-            return false;
-    }
-
-    return true;
-}
-
 
