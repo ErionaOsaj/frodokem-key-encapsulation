@@ -70,17 +70,6 @@ namespace FrodoKem
             return (B, s);
         }
 
-        //public (Matrix ciphertext, byte[] sharedSecret) Encapsulate(Matrix publicKey)
-        //{
-        //    Matrix r = GenerateNoiseMatrix(MatrixSize, MatrixSize);
-        //    Matrix e1 = GenerateNoiseMatrix(MatrixSize, MatrixSize);
-        //    Matrix e2 = GenerateNoiseVector(MatrixSize);
-        //    Matrix C1 = publicKey.Multiply(r).Add(e1);
-        //    Matrix C2 = r.Transpose().Multiply(A).Add(e2);
-
-        //    byte[] sharedSecret = HashMatrices(C1, C2); // Implement a suitable hash function
-        //    return (new Matrix(C1, C2), sharedSecret);
-        //}
         public (Matrix ciphertext, byte[] sharedSecret) Encapsulate(Matrix publicKey)
         {
             Matrix r = GenerateNoiseMatrix(MatrixSize, MatrixSize);
